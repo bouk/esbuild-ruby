@@ -138,7 +138,7 @@ module Esbuild
         stdin_contents = ""
         get_flag(stdin_options, :contents, String) { |v| stdin_contents = v }
         get_flag(stdin_options, :resolve_dir, String) { |v| stdin_resolve_dir = v }
-        get_flag(stdin_options, :source_file, String) { |v| flags << "--sourcefile=#{v}" }
+        get_flag(stdin_options, :sourcefile, String) { |v| flags << "--sourcefile=#{v}" }
         get_flag(stdin_options, :loader, String) { |v| flags << "--loader=#{v}" }
         raise ArgumentError, "Invalid option in stdin options: #{stdin_options.keys.first}" unless stdin_options.empty?
       end
