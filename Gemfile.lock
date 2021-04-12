@@ -1,0 +1,21 @@
+PATH
+  remote: .
+  specs:
+    esbuild (0.1.0)
+      concurrent-ruby (~> 1.1.8)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    concurrent-ruby (1.1.8)
+    rake (13.0.3)
+
+PLATFORMS
+  arm64-darwin-20
+
+DEPENDENCIES
+  esbuild!
+  rake (~> 13.0)
+
+BUNDLED WITH
+   2.2.15
