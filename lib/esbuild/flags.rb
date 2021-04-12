@@ -34,11 +34,11 @@ module Esbuild
       push_log_flags(flags, options, :silent)
       push_common_flags(flags, options)
       get_flag(options, :source_map, STRING_OR_BOOL) { |v| flags << "--source-map=#{v == true ? "external" : v}" if v }
-      get_flag(options, :tsconfig_raw, STRING_OR_OBJECT) { |v|  flags << "--tsconfig-raw=#{v.is_a?(String) ? v : JSON.dump(v)}" }
+      get_flag(options, :tsconfig_raw, STRING_OR_OBJECT) { |v| flags << "--tsconfig-raw=#{v.is_a?(String) ? v : JSON.dump(v)}" }
       get_flag(options, :source_file, String) { |v| flags << "--sourcefile=#{v}" }
       get_flag(options, :loader, STRING_OR_SYMBOL) { |v| flags << "--loader=#{v}" }
-      get_flag(options, :banner, String) { |v|  flags << "--banner=#{v}" }
-      get_flag(options, :footer, String) { |v|  flags << "--footer=#{v}" }
+      get_flag(options, :banner, String) { |v| flags << "--banner=#{v}" }
+      get_flag(options, :footer, String) { |v| flags << "--footer=#{v}" }
       raise ArgumentError, "Invalid option in transform() call: #{options.keys.first}" unless options.empty?
       flags
     end
@@ -61,7 +61,7 @@ module Esbuild
           raise ArgumentError, "Invalid option in watch options: #{watch_options.keys.first}" unless watch_options.empty?
         end
       end
-      get_flag(options, :splitting, BOOL) { |v|flags << "--splitting" if v }
+      get_flag(options, :splitting, BOOL) { |v| flags << "--splitting" if v }
       get_flag(options, :preserve_symlinks, BOOL) { |v| flags << "--preserve-symlinks" if v }
       get_flag(options, :metafile, BOOL) { |v| flags << "--metafile" if v }
       get_flag(options, :outfile, String) { |v| flags << "--outfile=#{v}" }
@@ -193,9 +193,9 @@ module Esbuild
       get_flag(options, :minify_whitespace, BOOL) { |v| flags << "--minify-whitespace" if v }
       get_flag(options, :minify_identifiers, BOOL) { |v| flags << "--minify-identifiers" if v }
       get_flag(options, :charset, String) { |v| flags << "--charset=#{v}" }
-      get_flag(options, :tree_shaking, STRING_OR_BOOL) { |v| flags <<  "--tree-shaking=#{v}" if v != true }
-      get_flag(options, :jsx_factory, String) { |v|  flags << "--jsx-factory=#{v}" }
-      get_flag(options, :jsx_fragment, String) { |v|  flags << "--jsx-fragment=#{v}" }
+      get_flag(options, :tree_shaking, STRING_OR_BOOL) { |v| flags << "--tree-shaking=#{v}" if v != true }
+      get_flag(options, :jsx_factory, String) { |v| flags << "--jsx-factory=#{v}" }
+      get_flag(options, :jsx_fragment, String) { |v| flags << "--jsx-fragment=#{v}" }
       get_flag(options, :define, Hash) do |v|
         v.each do |key, value|
           raise "Invalid define: #{key}" if key.include? "="

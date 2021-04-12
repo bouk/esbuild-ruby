@@ -15,14 +15,14 @@ module Esbuild
 
     def dispose
       return unless @rebuild_id
-      res = @service.send_request(command: "rebuild-dispose", rebuildID: @rebuild_id)
+      res = @service.send_request("command" => "rebuild-dispose", "rebuildID" => @rebuild_id)
       @rebuild_id = nil
       res
     end
 
     def rebuild
       raise "Cannot rebuild" if @rebuild_id.nil?
-      rebuild_response = @service.send_request(command: "rebuild", rebuildID: @rebuild_id)
+      rebuild_response = @service.send_request("command" => "rebuild", "rebuildID" => @rebuild_id)
       response_to_result(rebuild_response)
     end
 

@@ -4,11 +4,12 @@ require "esbuild/flags"
 require "esbuild/build_result"
 require "esbuild/serve_result"
 require "esbuild/build_state"
+require "esbuild/transform_result"
 
 module Esbuild
   class Service
     # TODO: plugins
-    ESBUILD_VERSION = "0.11.8"
+    ESBUILD_VERSION = "0.11.9"
 
     def initialize
       @request_id = 0
@@ -23,7 +24,8 @@ module Esbuild
 
       child_read, child_stdout = IO.pipe
       child_stdin, @child_write = IO.pipe
-      pid = spawn("npx", "esbuild", "--service=#{ESBUILD_VERSION}", "--ping", out: child_stdout, err: :err, in: child_stdin)
+      bin = `npm bin`.strip
+      pid = spawn("#{bin}/esbuild", "--service=#{ESBUILD_VERSION}", "--ping", out: child_stdout, err: :err, in: child_stdin)
       child_stdin.close
       child_stdout.close
 
@@ -37,17 +39,17 @@ module Esbuild
       on_rebuild = opts[:watch]&.fetch(:on_rebuild, nil)
 
       request = {
-        command: "build",
-        key: key,
-        entries: opts[:entries],
-        flags: opts[:flags],
-        write: opts[:write],
-        stdinContents: opts[:stdin_contents],
-        stdinResolveDir: opts[:stdin_resolve_dir],
-        absWorkingDir: opts[:abs_working_dir] || Dir.pwd,
-        incremental: opts[:incremental],
-        nodePaths: opts[:node_paths],
-        hasOnRebuild: !!on_rebuild
+        "command" => "build",
+        "key" => key,
+        "entries" => opts[:entries],
+        "flags" => opts[:flags],
+        "write" => opts[:write],
+        "stdinContents" => opts[:stdin_contents],
+        "stdinResolveDir" => opts[:stdin_resolve_dir],
+        "absWorkingDir" => opts[:abs_working_dir] || Dir.pwd,
+        "incremental" => opts[:incremental],
+        "nodePaths" => opts[:node_paths],
+        "hasOnRebuild" => !!on_rebuild
       }
       serve = serve_options && build_serve_data(serve_options, request)
 
@@ -66,17 +68,26 @@ module Esbuild
 
     def stop_watch(watch_id)
       @watch_callbacks.delete(watch_id)
-      send_request(command: "watch-stop", watchID: watch_id)
+      send_request(
+        "command" => "watch-stop",
+        "watchID" => watch_id
+      )
     end
 
     def transform(input, options)
       flags = Flags.flags_for_transform_options(options)
-      send_request(
-        command: "transform",
-        flags: flags,
-        inputFS: false,
-        input: input
+      res = send_request(
+        "command" => "transform",
+        "flags" => flags,
+        "inputFS" => false,
+        "input" => input
       )
+
+      unless res["errors"].empty?
+        raise BuildFailureError, res["errors"], res["warnings"]
+      end
+
+      TransformResult.new(res)
     end
 
     def send_request(request)
@@ -141,7 +152,7 @@ module Esbuild
       {
         wait: wait,
         stop: -> do
-          send_request(command: "serve-stop", serveID: serve_id)
+          send_request("command" => "serve-stop", "serveID" => serve_id)
         end
       }
     end

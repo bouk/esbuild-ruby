@@ -30,7 +30,7 @@ module Esbuild
           nil
         when 1
           # Bool
-          !!read8
+          read8 == 1
         when 2
           # Integer
           read32
@@ -105,12 +105,11 @@ module Esbuild
         when String
           if value.encoding == Encoding::BINARY
             write8 4
-            write_string value
           else
             write8 3
             value = value.encode(Encoding::UTF_8) unless value.encoding == Encoding::UTF_8
-            write_string value
           end
+          write_string value
         when Array
           write8 5
           write32 value.size
