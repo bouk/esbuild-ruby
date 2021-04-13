@@ -5,15 +5,9 @@ require "net/https"
 
 module Esbuild
   class BinaryInstaller
-    KNOWN_UNIX_LIKE_PACKAGES = {
-      "arm64-darwin20" => "esbuild-darwin-arm64",
-      "x86_64-linux" => "esbuild-linux-64",
-      "x86_64-darwin" => "esbuild-darwin-64"
-    }
-
     attr_reader :platform, :path
     def initialize(platform, path)
-      package = KNOWN_UNIX_LIKE_PACKAGES[platform]
+      package = package_from_platform(platform)
       raise ArgumentError, "Unknown platform #{platform}" unless package
       @package = package
       @path = path
@@ -55,6 +49,17 @@ module Esbuild
       version, _ = Open3.capture2(path, "--version")
       version = version.strip
       raise "Expected #{ESBUILD_VERSION} but got #{version}" unless ESBUILD_VERSION == version
+    end
+
+    def package_from_platform(platform)
+      case platform
+      when /^x86_64-darwin/
+        "esbuild-darwin-64"
+      when /^arm64-darwin/
+        "esbuild-darwin-arm64"
+      when "x86_64-linux"
+        "esbuild-linux-64"
+      end
     end
   end
 end
