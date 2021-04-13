@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+  spec.extensions = ["Rakefile"]
   spec.add_dependency "concurrent-ruby", "~> 1.1.8"
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "standard"

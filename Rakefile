@@ -8,4 +8,12 @@ Rake::TestTask.new(:test) do |t|
   t.pattern = "test/**/*_test.rb"
   t.verbose = false
 end
-task default: :task
+
+task :download_binary do
+  require_relative "lib/esbuild/binary_installer"
+  esbuild_bin = File.join(__dir__, "bin", "esbuild")
+  installer = Esbuild::BinaryInstaller.new(RUBY_PLATFORM, esbuild_bin)
+  installer.install
+end
+
+task default: :download_binary

@@ -9,7 +9,6 @@ require "esbuild/transform_result"
 module Esbuild
   class Service
     # TODO: plugins
-    ESBUILD_VERSION = "0.11.9"
 
     def initialize
       @request_id = 0
@@ -24,8 +23,8 @@ module Esbuild
 
       child_read, child_stdout = IO.pipe
       child_stdin, @child_write = IO.pipe
-      bin = `npm bin`.strip
-      pid = spawn("#{bin}/esbuild", "--service=#{ESBUILD_VERSION}", "--ping", out: child_stdout, err: :err, in: child_stdin)
+      bin = binary_path
+      pid = spawn(bin, "--service=#{ESBUILD_VERSION}", "--ping", out: child_stdout, err: :err, in: child_stdin)
       child_stdin.close
       child_stdout.close
 
@@ -248,6 +247,10 @@ module Esbuild
         callback.fail(error)
       end
       @response_callbacks.clear
+    end
+
+    def binary_path
+      ENV["ESBUILD_BINARY_PATH"] || File.expand_path("../../bin/esbuild", __dir__)
     end
   end
 

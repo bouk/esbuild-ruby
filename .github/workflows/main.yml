@@ -4,7 +4,12 @@ on: [push,pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -15,4 +20,5 @@ jobs:
       run: |
         gem install bundler -v 2.2.15
         bundle install
-        bundle exec rake
+        bundle exec rake # Install binary
+        bundle exec rake test
