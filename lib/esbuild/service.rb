@@ -265,15 +265,21 @@ module Esbuild
       unless errors.empty?
         limit = 5
         details = errors.slice(0, limit + 1).each_with_index.map do |error, index|
-          break "\n..." if index == limit
-          location = error["location"]
-          break "\nerror: #{error["text"]}" unless location
-          "\n#{location["file"]}:#{location["line"]}:#{location["column"]}: error: #{error["text"]}"
+          transform_error(error, index, limit)
         end.join
-        summary = "with #{errors.size} error#{errors.size > 1 ? "s" : ""}:#{details}"
+        summary = " with #{errors.size} error#{errors.size > 1 ? "s" : ""}:#{details}"
       end
 
       super "Build failed#{summary}"
+    end
+
+    private
+
+    def transform_error(error, index, limit)
+      return "\n..." if index == limit
+      location = error["location"]
+      return "\nerror: #{error["text"]}" unless location
+      "\n#{location["file"]}:#{location["line"]}:#{location["column"]}: error: #{error["text"]}"
     end
   end
 end
