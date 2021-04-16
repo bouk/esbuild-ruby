@@ -83,7 +83,7 @@ module Esbuild
       )
 
       unless res["errors"].empty?
-        raise BuildFailureError, res["errors"], res["warnings"]
+        raise BuildFailureError.new(res["errors"], res["warnings"])
       end
 
       TransformResult.new(res)

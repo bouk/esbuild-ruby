@@ -40,7 +40,7 @@ module Esbuild
 
     def response_to_result(res)
       unless res["errors"].empty?
-        raise BuildFailureError, res["errors"], res["warnings"]
+        raise BuildFailureError.new(res["errors"], res["warnings"])
       end
       if res["writeToStdout"]
         $stdout.puts res["writeToStdout"].rstrip
