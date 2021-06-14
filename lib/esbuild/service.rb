@@ -21,8 +21,9 @@ module Esbuild
       @serve_callbacks = Concurrent::Map.new
       @buffer = String.new(encoding: Encoding::BINARY)
 
-      child_read, child_stdout = IO.pipe
-      child_stdin, @child_write = IO.pipe
+      child_read, child_stdout = create_pipes
+      child_stdin, @child_write = create_pipes
+
       bin = binary_path
       pid = spawn(bin, "--service=#{ESBUILD_VERSION}", "--ping", out: child_stdout, err: :err, in: child_stdin)
       child_stdin.close
@@ -36,7 +37,6 @@ module Esbuild
       @build_key += 1
       opts = Flags.flags_for_build_options(options)
       on_rebuild = opts[:watch]&.fetch(:on_rebuild, nil)
-
       request = {
         "command" => "build",
         "key" => key,
@@ -251,6 +251,13 @@ module Esbuild
 
     def binary_path
       ENV["ESBUILD_BINARY_PATH"] || File.expand_path("../../bin/esbuild", __dir__)
+    end
+
+    def create_pipes
+      r, w = IO.pipe(Encoding::BINARY, Encoding::BINARY, binmode: true)
+      r.set_encoding(Encoding::BINARY)
+      w.set_encoding(Encoding::BINARY)
+      [r, w]
     end
   end
 
