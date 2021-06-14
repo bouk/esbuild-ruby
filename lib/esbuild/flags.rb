@@ -100,12 +100,14 @@ module Esbuild
       get_flag(options, :external, Array) { |v| v.each { |name| flags << "--external:#{name}" } }
       get_flag(options, :banner, Hash) do |v|
         v.each do |type, value|
+          type = type.to_s
           raise ArgumentError, "Invalid banner file type: #{type}" if type.include?("=")
           flags << "--banner:#{type}=#{value}"
         end
       end
       get_flag(options, :footer, Hash) do |v|
         v.each do |type, value|
+          type = type.to_s
           raise ArgumentError, "Invalid footer file type: #{type}" if type.include?("=")
           flags << "--footer:#{type}=#{value}"
         end
@@ -113,12 +115,14 @@ module Esbuild
       get_flag(options, :inject, Array) { |v| v.each { |name| flags << "--inject:#{name}" } }
       get_flag(options, :loader, Hash) do |v|
         v.each do |ext, loader|
+          ext = ext.to_s
           raise ArgumentError, "Invalid loader extension: #{ext}" if ext.include?("=")
           flags << "--loader:#{ext}=#{loader}"
         end
       end
       get_flag(options, :out_extension, Hash) do |v|
         v.each do |ext, extension|
+          ext = ext.to_s
           raise ArgumentError, "Invalid out extension: #{ext}" if ext.include?("=")
           flags << "--out-extension:#{ext}=#{extension}"
         end
@@ -198,6 +202,7 @@ module Esbuild
       get_flag(options, :jsx_fragment, String) { |v| flags << "--jsx-fragment=#{v}" }
       get_flag(options, :define, Hash) do |v|
         v.each do |key, value|
+          key = key.to_s
           raise "Invalid define: #{key}" if key.include? "="
           flags << "--define:#{key}=#{value}"
         end

@@ -6,6 +6,11 @@ class BuildTest < Minitest::Test
     assert result.metafile.outputs["stdin.js"]
   end
 
+  def test_build_option_symbol_define
+    result = Esbuild.build(stdin: {contents: %(cool), sourcefile: "source.js"}, write: false, metafile: true, define: {cool: "yes"})
+    assert result.metafile.outputs["stdin.js"]
+  end
+
   def test_build_not_found
     error = assert_raises Esbuild::BuildFailureError do
       Esbuild.build(entry_points: ["non-existent"])

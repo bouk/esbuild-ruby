@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module Esbuild
-  VERSION = "0.1.2"
-  ESBUILD_VERSION = "0.11.9"
+  VERSION = "0.2.0"
+  ESBUILD_VERSION = "0.12.8"
 end
